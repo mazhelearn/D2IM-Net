@@ -5,7 +5,7 @@ import torch
 import utils
 from models.D2IM import D2IM_Net
 from datasets.SDFDataset import SDFDataset as Dataset
-
+from torch.utils.tensorboard import SummaryWriter
 def test_one_with_gttransmat(model, dataset, gridworldcoords, cat_id, shape_id, cam_id, output_dir, config):
     rgb_image, _, transmat = dataset.get_testdata(cat_id, shape_id, cam_id)
     if((rgb_image is None) or (transmat is None)):
@@ -96,7 +96,7 @@ def train(config):
     if(config.cuda):
         torch.cuda.set_device(config.gpu)
         torch.backends.cudnn.benchmark = True
-
+    log_writer = SummaryWriter(config.output_dir+'/log')
     model = D2IM_Net(config)
     if(config.cuda):
         model.cuda()
@@ -124,6 +124,7 @@ def train(config):
         # train
         model.train()
         loss = train_epoch(epoch, model, optimizer, train_iter, config)
+        log_writer.add_scalar('D2IM/loss/train', loss, epoch)
         print('epoch %d finished.'%(epoch+1))
         if(best_test_loss>loss):
             # save it as the best model
