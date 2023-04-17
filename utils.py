@@ -8,10 +8,10 @@ from argparse import ArgumentParser
 def get_args():
     parser = ArgumentParser(description='D2IM-Net')
     parser.add_argument('--cuda', type=bool, default=True)
-    parser.add_argument('--gpu', type=int, default=0)
+    parser.add_argument('--gpu', type=int, default=1)
     parser.add_argument('--plot_every_batch', type=int, default=10)
-    parser.add_argument('--save_every_epoch', type=int, default=20)
-    parser.add_argument('--test_every_epoch', type=int, default=20)
+    parser.add_argument('--save_every_epoch', type=int, default=100)
+    parser.add_argument('--test_every_epoch', type=int, default=100)
     parser.add_argument('--load_pretrain', type=bool, default=True)
 
     parser.add_argument('--viewnum', type=int, default=36)
@@ -25,16 +25,16 @@ def get_args():
     parser.add_argument('--cam_lr', type=float, default=0.00005)
     parser.add_argument('--train_batch_size', type=int, default=16)
     parser.add_argument('--test_batch_size', type=int, default=1)
-    parser.add_argument('--epochs', type=int, default=400)
+    parser.add_argument('--epochs', type=int, default=2000)
     parser.add_argument('--sampling_mode', type=str, default='weighted')
     parser.add_argument('--exp_name', type=str, default='d2im')
     
-    parser.add_argument('--data_dir', default='/local-scratch/manyi/SVR_detail/data/DISN_split/')
-    parser.add_argument('--h5_dir', default='/local-scratch/manyi/SVR_detail/data/SDF_withGradient/')
-    parser.add_argument('--density_dir', default='/local-scratch/manyi/SVR_detail/data/SDF_density/')
-    parser.add_argument('--cam_dir', default='/local-scratch/manyi/SVR_detail/data/image/')
-    parser.add_argument('--image_dir', default='/local-scratch/manyi/SVR_detail/data/image/')
-    parser.add_argument('--normal_dir', default='/local-scratch/manyi/SVR_detail/data/normal_processed/')
+    parser.add_argument('--data_dir', default='./data/DISN_split/')
+    parser.add_argument('--h5_dir', default='./data/SDF_with_gradient/')
+    parser.add_argument('--density_dir', default='./data/SDF_density/')
+    parser.add_argument('--cam_dir', default='./data/image/')
+    parser.add_argument('--image_dir', default='./data/image/')
+    parser.add_argument('--normal_dir', default='./data/normal_processed/')
     
     parser.add_argument('--model_dir', default='./ckpt/models')
     parser.add_argument('--output_dir', default='./ckpt/outputs')
@@ -78,7 +78,8 @@ def get_args():
 
     args = parser.parse_args()
     args.testlist = testlist
-    args.catlist = ['03001627', '02691156', '02828884', '02933112', '03211117', '03636649', '03691459', '04090263', '04256520', '04379243', '04530566','02958343', '04401088']
+    # args.catlist = ['03001627', '02691156', '02828884', '02933112', '03211117', '03636649', '03691459', '04090263', '04256520', '04379243', '04530566','02958343', '04401088']
+    args.catlist = ['03001627', '02691156']
     return args
 
 def print_log(log_fname, logline):
@@ -168,4 +169,3 @@ def write_ply(fname, vertices, triangles):
 	for ii in range(len(triangles)):
 		fout.write("3 "+str(triangles[ii,0])+" "+str(triangles[ii,1])+" "+str(triangles[ii,2])+"\n")
 	fout.close()
-

@@ -29,9 +29,9 @@ class SDFDataset(data.Dataset):
             filename = config.data_dir + cat_id + '_' + status + '.lst'
             shape_ids = self.read_shape_ids_from_file(filename)
             for shape_id in shape_ids:
-                rgb_fn = config.image_dir + cat_id + '_easy/' + shape_id + '/'
+                rgb_fn = config.image_dir + cat_id  +"/"+ shape_id  + '/easy/'
                 normal_fn = config.normal_dir + cat_id + '_easy/' + shape_id + '/'
-                cam_fn = config.image_dir + cat_id + '_easy/' + shape_id + '/rendering_metadata.txt'
+                cam_fn = rgb_fn+ 'rendering_metadata.txt'
                 h5_fn = config.h5_dir + cat_id + '/' + shape_id + '/data.h5'
                 density_fn = config.density_dir + cat_id + '/' + shape_id + '/density.h5'
                 if(os.path.exists(h5_fn) and os.path.exists(cam_fn) and os.path.exists(rgb_fn)):
@@ -106,9 +106,9 @@ class SDFDataset(data.Dataset):
         #cat_id, shape_id = data['cat_id'], data['shape_id']
         #cam_id = 0
         
-        rgb_fn = self.config.image_dir + cat_id + '_easy/' + shape_id + '/'
+        rgb_fn = self.config.image_dir + cat_id + '/' + shape_id + '/easy/'
         normal_fn = self.config.normal_dir + cat_id + '_easy/' + shape_id + '/'
-        cam_fn = self.config.image_dir + cat_id + '_easy/' + shape_id + '/rendering_metadata.txt'
+        cam_fn = rgb_fn  + 'rendering_metadata.txt'
 
         # read data
         if(os.path.exists(cam_fn) and os.path.exists(rgb_fn)):
@@ -235,3 +235,18 @@ class SDFDataset(data.Dataset):
         trans_mat = np.linalg.multi_dot([K, RT, rot_mat])        
         trans_mat_right = np.transpose(trans_mat)
         return trans_mat_right
+
+
+def read_shape_ids_from_file(filename):
+    shape_id_list = []
+    fid = open(filename, 'r')
+    lines = fid.readlines()
+    lines = [l.strip('\n') for l in lines]
+    return lines
+
+
+def read_rgba_image(img_dir, cam_id):
+    img_fn = img_dir + str(cam_id).zfill(2) + '.png'
+    image = cv2.imread(img_fn)[:, :, :3]
+    image = image / 255.0
+    return image
